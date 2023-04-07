@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/SchneiderNicolas/meteosthoffen-lambda-send-email#readme",
   "dependencies": {
-    "aws-sdk": "^2.1352.0"
+    "aws-sdk": "^2.1352.0",
+    "handlebars": "^4.7.7"
   }
 }
