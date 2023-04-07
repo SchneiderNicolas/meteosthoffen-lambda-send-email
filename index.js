@@ -17,7 +17,7 @@ exports.handler = async (event) => {
       },
       Subject: {
         Charset: "UTF-8",
-        Data: "hello world",
+        Data: "Subject",
       },
     },
   };
