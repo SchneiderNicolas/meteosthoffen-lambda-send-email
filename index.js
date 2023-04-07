@@ -1,14 +1,23 @@
 const aws = require("aws-sdk");
 const fs = require("fs");
 const path = require("path");
+const handlebars = require("handlebars");
 
 exports.handler = async (event) => {
-  const { senderEmail, senderName, message } = JSON.parse(event.body);
+    const {receivers, formTitle, content } = JSON.parse(event.body);
 
   const acknowledgmentHtml = fs.readFileSync(
     path.join(__dirname, "acknowledgment.html"),
     "utf8"
   );
+
+  const templateFile = fs.readFileSync(
+    path.join(__dirname, "template.html"),
+    "utf8"
+  );
+  const template = handlebars.compile(templateFile);
+
+  const informationHtml = template({ formTitle, content });
 
   const acknowledgment = {
     Source: "nicolas.j.sch@gmail.com",
@@ -38,7 +47,7 @@ exports.handler = async (event) => {
       Body: {
         Html: {
           Charset: "UTF-8",
-          Data: "<div>Message pour les informations</div>",
+          Data: informationHtml,
         },
       },
       Subject: {
