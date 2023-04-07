@@ -1,0 +1,23 @@
+{
+  "name": "meteosthoffen-lambda-send-email",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SchneiderNicolas/meteosthoffen-lambda-send-email.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SchneiderNicolas/meteosthoffen-lambda-send-email/issues"
+  },
+  "homepage": "https://github.com/SchneiderNicolas/meteosthoffen-lambda-send-email#readme",
+  "dependencies": {
+    "aws-sdk": "^2.1352.0"
+  }
+}
