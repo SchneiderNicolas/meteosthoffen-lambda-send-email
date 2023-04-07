@@ -4,7 +4,29 @@ const path = require("path");
 const handlebars = require("handlebars");
 
 exports.handler = async (event) => {
-    const {receivers, formTitle, content } = JSON.parse(event.body);
+  const { receivers, selectedObject, formValues } = JSON.parse(event.body);
+
+  function getContent(formsValue, selectedObject) {
+    let content = "";
+    if (selectedObject) {
+      content +=
+        '<tr><td style="width: 13%; text-align: right; padding: 3px 15px 3px 3px; font-weight: bold;">' +
+        "Subject label :" +
+        "</td><td>" +
+        selectedObject +
+        "</td></tr>";
+    }
+
+    for (const [key, value] of Object.entries(formsValue)) {
+      content +=
+        '<tr><td style="width: 13%; text-align: right; padding: 3px 15px 3px 3px; font-weight: bold;">' +
+        key +
+        " : </td><td>" +
+        value +
+        "</td></tr>";
+    }
+    return content;
+  }
 
   const acknowledgmentHtml = fs.readFileSync(
     path.join(__dirname, "acknowledgment.html"),
@@ -15,9 +37,15 @@ exports.handler = async (event) => {
     path.join(__dirname, "template.html"),
     "utf8"
   );
+
   const template = handlebars.compile(templateFile);
 
-  const informationHtml = template({ formTitle, content });
+  const content = {
+    formTitle: selectedObject,
+    content: getContent(formValues, selectedObject),
+  };
+
+  const informationHtml = template(content);
 
   const acknowledgment = {
     Source: "nicolas.j.sch@gmail.com",
@@ -71,7 +99,8 @@ exports.handler = async (event) => {
       const response = {
         statusCode: 500,
         body: JSON.stringify({
-          message: "Une ou plusieurs erreurs se sont produites lors de l'envoi des e-mails.",
+          message:
+            "Une ou plusieurs erreurs se sont produites lors de l'envoi des e-mails.",
           errors,
         }),
       };
@@ -89,12 +118,13 @@ exports.handler = async (event) => {
     return response;
   } catch (error) {
     const response = {
-      statusCode: 500,
-      body: JSON.stringify({
-        message: "Une erreur inattendue s'est produite lors de l'envoi des e-mails.",
-        error: error.message,
-      }),
-    };
-    return response;
-  }
-};
+        statusCode: 500,
+        body: JSON.stringify({
+          message:
+            "Une erreur inattendue s'est produite lors de l'envoi des e-mails.",
+          error: error.message,
+        }),
+      };
+      return response;
+    }
+  };
