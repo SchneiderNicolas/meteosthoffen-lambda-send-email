@@ -50,7 +50,7 @@ exports.handler = async (event) => {
   const acknowledgment = {
     Source: "nicolas.j.sch@gmail.com",
     Destination: {
-      ToAddresses: recipient,
+      ToAddresses: [recipient],
     },
     Message: {
       Body: {
