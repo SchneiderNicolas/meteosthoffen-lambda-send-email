@@ -1,7 +1,7 @@
-const aws = require("aws-sdk");
 const fs = require("fs");
 const path = require("path");
 const handlebars = require("handlebars");
+const nodemailer = require('nodemailer');
 
 exports.handler = async (event) => {
   const { receivers, recipient, selectedObject, formValues } = JSON.parse(event.body);
@@ -47,51 +47,35 @@ exports.handler = async (event) => {
 
   const informationHtml = template(content);
 
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    auth: {
+      user: process.env.EMAIL_ADDRESS,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+
   const acknowledgment = {
-    Source: "nicolas.j.sch@gmail.com",
-    Destination: {
-      ToAddresses: [recipient],
-    },
-    Message: {
-      Body: {
-        Html: {
-          Charset: "UTF-8",
-          Data: acknowledgmentHtml,
-        },
-      },
-      Subject: {
-        Charset: "UTF-8",
-        Data: "Accusé de réception pour votre demande",
-      },
-    },
+    from: "nicolas.j.sch@gmail.com",
+    to: recipient,
+    subject: "Accusé de réception pour votre demande",
+    html: acknowledgmentHtml,
   };
 
   const informations = {
-    Source: "nicolas.j.sch@gmail.com",
-    Destination: {
-      ToAddresses: receivers,
-    },
-    Message: {
-      Body: {
-        Html: {
-          Charset: "UTF-8",
-          Data: informationHtml,
-        },
-      },
-      Subject: {
-        Charset: "UTF-8",
-        Data: "Nouveaux formulaire de contact",
-      },
-    },
+    from: "nicolas.j.sch@gmail.com",
+    to: receivers,
+    subject: "Nouveaux formulaire de contact",
+    html: informationHtml,
   };
 
-  const ses = new aws.SES({ region: "eu-west-1", apiVersion: "2010-12-01" });
-
-  const sendPromise1 = ses.sendEmail(acknowledgment).promise();
-  const sendPromise2 = ses.sendEmail(informations).promise();
-
   try {
-    const results = await Promise.allSettled([sendPromise1, sendPromise2]);
+    const results = await Promise.allSettled([
+      transporter.sendMail(acknowledgment),
+      transporter.sendMail(informations),
+    ]);
 
     const errors = results.filter((result) => result.status === "rejected");
 
@@ -118,14 +102,14 @@ exports.handler = async (event) => {
     return response;
   } catch (error) {
     const response = {
-        statusCode: 500,
-        body: JSON.stringify({
-          message:
-            "Une erreur inattendue s'est produite lors de l'envoi des e-mails.",
-          error: error.message,
-        }),
-      };
-      return response;
-    }
-  };
-
+      statusCode: 500,
+      body: JSON.stringify({
+        message:
+          "Une erreur inattendue s'est produite lors de l'envoi des e-mails.",
+        error: error.message,
+      }),
+    };
+    return response;
+  }
+};
+``
