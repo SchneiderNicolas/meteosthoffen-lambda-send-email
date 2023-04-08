@@ -59,7 +59,7 @@ exports.handler = async (event) => {
 
   const acknowledgment = {
     from: "nicolas.j.sch@gmail.com",
-    to: recipient,
+    to: [recipient],
     subject: "Accusé de réception pour votre demande",
     html: acknowledgmentHtml,
   };
