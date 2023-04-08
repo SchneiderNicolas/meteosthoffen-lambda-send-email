@@ -4,14 +4,14 @@ const path = require("path");
 const handlebars = require("handlebars");
 
 exports.handler = async (event) => {
-  const { receivers, selectedObject, formValues } = JSON.parse(event.body);
+  const { receivers, recipient, selectedObject, formValues } = JSON.parse(event.body);
 
   function getContent(formsValue, selectedObject) {
     let content = "";
     if (selectedObject) {
       content +=
         '<tr><td style="width: 13%; text-align: right; padding: 3px 15px 3px 3px; font-weight: bold;">' +
-        "Subject label :" +
+        "Objet de la demande :" +
         "</td><td>" +
         selectedObject +
         "</td></tr>";
@@ -50,7 +50,7 @@ exports.handler = async (event) => {
   const acknowledgment = {
     Source: "nicolas.j.sch@gmail.com",
     Destination: {
-      ToAddresses: ["nicolas.j.sch@gmail.com"],
+      ToAddresses: recipient,
     },
     Message: {
       Body: {
@@ -69,7 +69,7 @@ exports.handler = async (event) => {
   const informations = {
     Source: "nicolas.j.sch@gmail.com",
     Destination: {
-      ToAddresses: ["nicolas.j.sch@gmail.com"],
+      ToAddresses: receivers,
     },
     Message: {
       Body: {
@@ -128,3 +128,4 @@ exports.handler = async (event) => {
       return response;
     }
   };
+
