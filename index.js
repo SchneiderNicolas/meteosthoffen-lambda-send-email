@@ -58,14 +58,14 @@ exports.handler = async (event) => {
   });
 
   const acknowledgment = {
-    from: "nicolas.j.sch@gmail.com",
+    from: process.env.EMAIL_ADDRESS,
     to: [recipient],
     subject: "Accusé de réception pour votre demande",
     html: acknowledgmentHtml,
   };
 
   const informations = {
-    from: "nicolas.j.sch@gmail.com",
+    from: process.env.EMAIL_ADDRESS,
     to: receivers,
     subject: "Nouveaux formulaire de contact",
     html: informationHtml,
@@ -112,4 +112,3 @@ exports.handler = async (event) => {
     return response;
   }
 };
-``
